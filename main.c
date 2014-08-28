@@ -356,10 +356,7 @@ int LoadProgram(Instruction inst) {
     }
 
     // Check for exceptions.
-    if (program == NULL) {
-        return RET_FAILURE;
-    }
-    if (offset > size) {
+    if (program == NULL || offset > size) {
         return RET_FAILURE;
     }
 

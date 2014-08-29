@@ -10,10 +10,10 @@ uint32_t Registers[8] = {0};
  * Note that instructions retrieve the array pointers via their index in this
  * array! Effectively, the program array 0 is "referenced" by retrieving the
  * item at index 0.*/
-uint32_t *Programs[NUM_ARRAYS - 1] = {NULL};
+uint32_t *Programs[NUM_ARRAYS] = {NULL};
 
 /* Size (in 32-bit words) of the program arrays. */
-size_t ProgramSize[NUM_ARRAYS - 1] = {0};
+size_t ProgramSize[NUM_ARRAYS] = {0};
 
 /* Points to the current word to be read from a program array. */
 uint32_t *ProgramCounter = NULL;
@@ -29,11 +29,6 @@ int main(int argc, char **argv) {
     for (;;) {
         // Read in the word the program counter points to, then advance.
         uint32_t word = *(ProgramCounter++);
-        uint32_t swapped = ((word>>24)&0xff) | // move byte 3 to byte 0
-                    ((word<<8)&0xff0000) | // move byte 1 to byte 2
-                    ((word>>8)&0xff00) | // move byte 2 to byte 1
-                    ((word<<24)&0xff000000); // byte 0 to byte 3
-        word = swapped;
 
         // Process the instruction
         Instruction inst = ParseInstruction(word);
@@ -59,8 +54,12 @@ int main(int argc, char **argv) {
         // Check for exit conditions, which include a failure return value from
         // the above functions, or the program counter pointing pointing
         // outside of the array.
-        if (retVal == RET_FAILURE) return EXIT_FAILURE;
-        if ((ProgramCounter - Programs[0]) >= ProgramSize[0]) return EXIT_FAILURE;
+        if (retVal == RET_FAILURE) {
+            return EXIT_FAILURE;
+        }
+        if ((ProgramCounter - Programs[0]) >= ProgramSize[0]) {
+            return EXIT_FAILURE;
+        }
     }
 }
 
@@ -116,13 +115,18 @@ void LoadFile(const char *filePath, uint32_t **programArray, size_t *size) {
     *programArray = (uint32_t *)malloc(*size);
     rewind(file);
 
-    // Finish up by reading the data into the array, checking that that the
-    // proper number of bytes were read, and closing the file stream.
+    // Finish up by reading the data into the program array. Endianess needs to
+    // be converted, so one word is read at a time and converted.
     *size /= 4; // Convert size from bytes to 32-bit words.
-    size_t count = fread(*programArray, 4, *size, file);
-    if (count < *size) {
-        *programArray = NULL;
-        return;
+    uint32_t buffer = 0, swapped = 0, i = 0;
+    for (i; i < *size; i++) {
+        fread(&buffer, sizeof(uint32_t), 1, file);
+        swapped = ((buffer >> 24) & 0xff)      | // move byte 3 to byte 0
+                  ((buffer << 8)  & 0xff0000)  | // move byte 1 to byte 2
+                  ((buffer >> 8)  & 0xff00)    | // move byte 2 to byte 1
+                  ((buffer << 24) & 0xff000000); // byte 0 to byte 3
+
+        *(*programArray + i) = swapped;
     }
     fclose(file);
     return;
@@ -263,8 +267,9 @@ int Allocate(Instruction inst) {
     if (index == NUM_ARRAYS) return RET_FAILURE;
 
     ProgramSize[index] = Registers[inst.registerC];
-    Programs[index] = (uint32_t *) malloc(ProgramSize[index] * sizeof(uint32_t));
+    Programs[index] = (uint32_t *) calloc(ProgramSize[index], sizeof(uint32_t));
     Registers[inst.registerB] = index;
+
     return RET_SUCCESS;
 }
 
@@ -356,16 +361,13 @@ int LoadProgram(Instruction inst) {
     }
 
     // Check for exceptions.
-    if (program == NULL) {
-        return RET_FAILURE;
-    }
-    if (offset > size) {
+    if ((program == NULL) || (offset > size)) {
         return RET_FAILURE;
     }
 
     // Copy the specified array into array 0 and point to it.
     uint32_t *duplicate = (uint32_t *)malloc(size * sizeof(uint32_t));
-    memcpy(duplicate, program, size);
+    memcpy(duplicate, program, size * sizeof(uint32_t));
     free(Programs[0]);
     Programs[0] = duplicate;
     ProgramSize[0] = size;

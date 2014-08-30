@@ -56,9 +56,9 @@ int main(int argc, char **argv) {
         if (retVal == RET_FAILURE) {
             return EXIT_FAILURE;
         }
-        if ((ProgramCounter - Programs[0]) >= ProgramSize[0]) {
-            return EXIT_FAILURE;
-        }
+	//        if ((ProgramCounter - Programs[0]) >= ProgramSize[0]) {
+	//            return EXIT_FAILURE;
+	//        }
     }
 }
 

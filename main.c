@@ -79,15 +79,14 @@ int Init(int argc, char **argv) {
 
   // Try to load the file into array 0 and point the counter to it.
   LoadFile(argv[1], program_0);
-  if(0) {
-    ProgramCounter = program_0;
-    return RET_SUCCESS;
-  }
+  ProgramCounter = program_0;
+  return RET_SUCCESS;
+  /*
   else {
     printf("Could not load %s.", argv[1]);
     PrintUsage(argv[0]);
     return RET_FAILURE;
-  }
+    }*/
 }
 
 /**

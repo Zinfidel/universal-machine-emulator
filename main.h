@@ -4,7 +4,7 @@
 
 #define RET_SUCCESS 0
 #define RET_FAILURE -1
-#define NUM_ARRAYS 64
+#define NUM_ARRAYS 65536
 
 /* Represents a standard 32-bit instruction. */
 typedef struct

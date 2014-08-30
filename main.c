@@ -194,10 +194,10 @@ int ArrayUpdate(Instruction inst) {
 
   // Referencing an unallocated array or accessing an out-of-bounds index is a
   // machine exception.
-  if ((array == NULL) || offset >= ProgramSize[index]) {
+  if (array == NULL) {
     return RET_FAILURE;
   } else {
-    array[offset] = Registers[inst.registerC];
+    *(array + offset) = Registers[inst.registerC];
     return RET_SUCCESS;
   }
 }

@@ -260,16 +260,9 @@ void Nand(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int Allocate(Instruction inst) {
-    // Do a linear scan through the array pointers to find one that is null.
-    // The index of the first null pointer will be the new array "reference."
-    // If we hit index NUM_ARRAYS, then there are no more arrays left!
-    unsigned int index = 0; // Pre-increment skips program array 0.
-    while ((++index < NUM_ARRAYS) && (Programs[index] != NULL));
-    if (index == NUM_ARRAYS) return RET_FAILURE;
-
-    ProgramSize[index] = Registers[inst.registerC];
-    Programs[index] = (uint32_t *) calloc(ProgramSize[index], sizeof(uint32_t));
-    Registers[inst.registerB] = index;
+    uint32_t size = Registers[inst.registerC];
+    uint32_t* new_array = (uint32_t *) calloc(size, sizeof(uint32_t));
+    Registers[inst.registerB] = new_array;
 
     return RET_SUCCESS;
 }

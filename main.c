@@ -337,32 +337,30 @@ int Input(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int LoadProgram(Instruction inst) {
-    uint32_t index = Registers[inst.registerB];
-    uint32_t offset = Registers[inst.registerC];
-    uint32_t *program = Programs[index];
-    size_t size = ProgramSize[index];
-
-    // If the program is just using this instruction to move the program
-    // counter, don't bother with copying memory and stuff.
-    if (index == 0) {
-        ProgramCounter = Programs[0] + offset;
-        return RET_SUCCESS;
-    }
-
-    // Check for exceptions.
-    if ((program == NULL) || (offset > size)) {
-        return RET_FAILURE;
-    }
-
-    // Copy the specified array into array 0 and point to it.
-    uint32_t *duplicate = (uint32_t *)malloc(size * sizeof(uint32_t));
-    memcpy(duplicate, program, size * sizeof(uint32_t));
-    free(Programs[0]);
-    Programs[0] = duplicate;
-    ProgramSize[0] = size;
+  uint32_t * array = (uint32_t *) Registers[inst.registerB];
+  uint32_t offset = Registers[inst.registerC];
+  
+  // If the program is just using this instruction to move the program
+  // counter, don't bother with copying memory and stuff.
+  if (index == 0) {
     ProgramCounter = Programs[0] + offset;
-
     return RET_SUCCESS;
+  }
+
+  // Check for exceptions.
+  if ((program == NULL) || (offset > size)) {
+    return RET_FAILURE;
+  }
+
+  // Copy the specified array into array 0 and point to it.
+  uint32_t *duplicate = (uint32_t *)malloc(size * sizeof(uint32_t));
+  memcpy(duplicate, program, size * sizeof(uint32_t));
+  free(Programs[0]);
+  Programs[0] = duplicate;
+  ProgramSize[0] = size;
+  ProgramCounter = Programs[0] + offset;
+
+  return RET_SUCCESS;
 }
 
 /**

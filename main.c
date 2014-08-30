@@ -105,7 +105,7 @@ void PrintUsage(char *programName) {
  * this pointer, and this pointer will be NULL if there are any errors.
  * @param size Gets set to the size (in 32-bit words) of the allocated array.
  */
-void LoadFile(const char *filePath, uint32_t **programArray) {
+void LoadFile(const char *filePath, uint32_t *programArray) {
     FILE *file = fopen(filePath, "rb");
     if (file == NULL) return;
 
@@ -127,7 +127,7 @@ void LoadFile(const char *filePath, uint32_t **programArray) {
                   ((buffer >> 8)  & 0xff00)    | // move byte 2 to byte 1
                   ((buffer << 24) & 0xff000000); // byte 0 to byte 3
 
-        *(*programArray + i) = swapped;
+        *(programArray + i) = swapped;
     }
     fclose(file);
     return;

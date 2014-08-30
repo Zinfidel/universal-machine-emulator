@@ -5,16 +5,15 @@
 
 /* Eight indexable, general-purpose 32-bit registers. */
 uint32_t Registers[8] = {0};
-
+/*
 /* Pointers to program arrays. NULL pointer indicates an unallocated array.
  * Note that instructions retrieve the array pointers via their index in this
  * array! Effectively, the program array 0 is "referenced" by retrieving the
- * item at index 0.*/
-uint32_t *Programs[NUM_ARRAYS] = {NULL};
+ * item at index 0.   * /
+uint32_t **Programs[NUM_ARRAYS] = {NULL};
 
-/* Size (in 32-bit words) of the program arrays. */
-size_t ProgramSize[NUM_ARRAYS] = {0};
-
+uint32_t *ProgramSize[NUM_ARRYS] = {0};
+*/
 /* Points to the current word to be read from a program array. */
 uint32_t *ProgramCounter = NULL;
 
@@ -76,10 +75,11 @@ int Init(int argc, char **argv) {
         return RET_FAILURE;
     }
 
+    uint32_t* program_0;
+
     // Try to load the file into array 0 and point the counter to it.
-    LoadFile(argv[1], &Programs[0], &ProgramSize[0]);
-    if (Programs[0] != NULL) {
-        ProgramCounter = Programs[0];
+    LoadFile(argv[1], program_0);
+    ProgramCounter = program_0;
         return RET_SUCCESS;
     } else {
         printf("Could not load %s.", argv[1]);

@@ -105,7 +105,7 @@ void PrintUsage(char *programName) {
  * this pointer, and this pointer will be NULL if there are any errors.
  * @param size Gets set to the size (in 32-bit words) of the allocated array.
  */
-void LoadFile(const char *filePath, uint32_t **programArray, size_t *size) {
+void LoadFile(const char *filePath, uint32_t **programArray) {
     FILE *file = fopen(filePath, "rb");
     if (file == NULL) return;
 
@@ -113,7 +113,7 @@ void LoadFile(const char *filePath, uint32_t **programArray, size_t *size) {
     // allocate a suitably-sized array for the data. Rewind the stream after.
     fseek(file, 0L, SEEK_END);
     *size = ftell(file);
-    *programArray = (uint32_t *)malloc(*size);
+    programArray = (uint32_t *)malloc(*size);
     rewind(file);
 
     // Finish up by reading the data into the program array. Endianess needs to

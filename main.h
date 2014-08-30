@@ -45,7 +45,7 @@ extern size_t ProgramSize[];
 /* Function Prototypes */
 int Init(int argc, char **argv);
 void PrintUsage(char *programName);
-void LoadFile(const char *filePath, uint32_t **programArray, size_t *size);
+void LoadFile(const char *filePath, uint32_t *programArray)
 Instruction ParseInstruction(uint32_t instruction);
 void ConditionalMove(Instruction inst);
 int ArrayIndex(Instruction inst);

@@ -340,8 +340,7 @@ int LoadProgram(Instruction inst) {
   uint32_t *array = (uint32_t *) Registers[inst.registerB];
   uint32_t offset = Registers[inst.registerC];
 
-
-  //TODO: How to manage these?  
+  //TODO: How to manage these? How to find the size?
   // If the program is just using this instruction to move the program
   // counter, don't bother with copying memory and stuff.
   if (index == 0) {

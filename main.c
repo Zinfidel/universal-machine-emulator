@@ -339,16 +339,18 @@ int Input(Instruction inst) {
 int LoadProgram(Instruction inst) {
   uint32_t * array = (uint32_t *) Registers[inst.registerB];
   uint32_t offset = Registers[inst.registerC];
-  
+
+
+  //TODO: How to manage these?  
   // If the program is just using this instruction to move the program
   // counter, don't bother with copying memory and stuff.
   if (index == 0) {
-    ProgramCounter = Programs[0] + offset;
+    ProgramCounter = array + offset;
     return RET_SUCCESS;
   }
 
   // Check for exceptions.
-  if ((program == NULL) || (offset > size)) {
+  if (program == NULL) {
     return RET_FAILURE;
   }
 

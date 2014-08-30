@@ -167,18 +167,18 @@ void ConditionalMove(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int ArrayIndex(Instruction inst) {
-    uint32_t index = Registers[inst.registerB];
-    uint32_t *array = Programs[index];
-    uint32_t offset = Registers[inst.registerC];
+  uint32_t *array = (uint32_t*) & Registers[inst.registerB];
+  uint32_t offset = Registers[inst.registerC];
     
-    // Referencing an unallocated array or accessing an out-of-bounds index is a
-    // machine exception.
-    if ((array == NULL) || offset >= ProgramSize[index]) {
-        return RET_FAILURE;
-    } else {
-        Registers[inst.registerA] = array[offset];
-        return RET_SUCCESS;
-    }
+  // Referencing an unallocated array or accessing an out-of-bounds index is a
+  // machine exception.
+  if (array == NULL) {
+    return RET_FAILURE;
+  } 
+  else {
+    Registers[inst.registerA] = (array + offset);
+    return RET_SUCCESS;
+  }
 }
 
 /**

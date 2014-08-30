@@ -276,15 +276,11 @@ int Allocate(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int Deallocate(Instruction inst) {
-    unsigned int index = Registers[inst.registerC];
-    if ((index == 0) || (index >= NUM_ARRAYS)) return RET_FAILURE;
-    if (Programs[index] == NULL) return RET_FAILURE;
+  uint32_t * array = (uint32_t *) Registers[inst.registerC];
 
-    // Free the memory, NULL the Programs array pointer, and clear the size.
-    free(Programs[index]);
-    Programs[index] = NULL;
-    ProgramSize[index] = 0;
-    return RET_SUCCESS;
+  // Free the memory, NULL the Programs array pointer, and clear the size.
+  free(*array);
+  return RET_SUCCESS;
 }
 
 /**

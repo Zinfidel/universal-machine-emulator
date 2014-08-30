@@ -358,7 +358,6 @@ int LoadProgram(Instruction inst) {
   uint32_t *duplicate = (uint32_t *)malloc(size * sizeof(uint32_t));
   memcpy(duplicate, array, size * sizeof(uint32_t));
   free(Programs[0]);
-  Programs[0] = duplicate;
   ProgramCounter = array + offset;
 
   return RET_SUCCESS;

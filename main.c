@@ -279,7 +279,7 @@ int Deallocate(Instruction inst) {
   uint32_t * array = (uint32_t *) Registers[inst.registerC];
 
   // Free the memory, NULL the Programs array pointer, and clear the size.
-  free(*array);
+  free(array);
   return RET_SUCCESS;
 }
 

@@ -112,7 +112,8 @@ void LoadFile(const char *filePath, uint32_t *programArray) {
     // Seek to the end of the file to get its size (in bytes) so that we can
     // allocate a suitably-sized array for the data. Rewind the stream after.
     fseek(file, 0L, SEEK_END);
-    uint32_t size = ftell(file);
+    uint32_t* size;
+    *size = ftell(file);
     programArray = (uint32_t *)malloc(*size);
     rewind(file);
 

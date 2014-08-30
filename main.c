@@ -176,7 +176,7 @@ int ArrayIndex(Instruction inst) {
     return RET_FAILURE;
   } 
   else {
-    Registers[inst.registerA] = (array + offset);
+    Registers[inst.registerA] = *(array + offset);
     return RET_SUCCESS;
   }
 }

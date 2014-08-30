@@ -69,23 +69,24 @@ int main(int argc, char **argv) {
  * @return RET_FAILURE if anything goes wrong, otherwise RET_SUCCESS.
  */
 int Init(int argc, char **argv) {
-    // Should only have one argument - the program to load.
-    if (argc != 2) {
-        PrintUsage(argv[0]);
-        return RET_FAILURE;
-    }
+  // Should only have one argument - the program to load.
+  if (argc != 2) {
+    PrintUsage(argv[0]);
+    return RET_FAILURE;
+  }
 
-    uint32_t* program_0;
+  uint32_t* program_0;
 
-    // Try to load the file into array 0 and point the counter to it.
-    LoadFile(argv[1], program_0);
+  // Try to load the file into array 0 and point the counter to it.
+  if(LoadFile(argv[1], program_0)) {
     ProgramCounter = program_0;
-        return RET_SUCCESS;
-    } else {
-        printf("Could not load %s.", argv[1]);
-        PrintUsage(argv[0]);
-        return RET_FAILURE;
-    }
+    return RET_SUCCESS;
+  }
+  else {
+    printf("Could not load %s.", argv[1]);
+    PrintUsage(argv[0]);
+    return RET_FAILURE;
+  }
 }
 
 /**

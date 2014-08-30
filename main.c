@@ -189,18 +189,17 @@ int ArrayIndex(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int ArrayUpdate(Instruction inst) {
-    uint32_t index = Registers[inst.registerA];
-    uint32_t *array = Programs[index];
-    uint32_t offset = Registers[inst.registerB];
+  uint32_t *array = (uint32_t*) & Registers[inst.registerA];
+  uint32_t offset = Registers[inst.registerB];
 
-    // Referencing an unallocated array or accessing an out-of-bounds index is a
-    // machine exception.
-    if ((array == NULL) || offset >= ProgramSize[index]) {
-        return RET_FAILURE;
-    } else {
-        array[offset] = Registers[inst.registerC];
-        return RET_SUCCESS;
-    }
+  // Referencing an unallocated array or accessing an out-of-bounds index is a
+  // machine exception.
+  if ((array == NULL) || offset >= ProgramSize[index]) {
+    return RET_FAILURE;
+  } else {
+    array[offset] = Registers[inst.registerC];
+    return RET_SUCCESS;
+  }
 }
 
 /**

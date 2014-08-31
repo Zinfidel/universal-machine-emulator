@@ -6,7 +6,7 @@
 struct {
   uint32_t * array;
   unsigned int size;
-} SArray;
+} MemArray;
 
 /* Eight indexable, general-purpose 32-bit registers. */
 uint32_t Registers[8] = {0};
@@ -21,7 +21,6 @@ uint32_t *ProgramSize[NUM_ARRYS] = {0};
 */
 /* Points to the current word to be read from a program array. */
 uint32_t *ProgramCounter = NULL;
-
 
 int main(int argc, char **argv) {
     // Take care of argument inspection, file loading, etc.

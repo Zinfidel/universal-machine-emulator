@@ -350,7 +350,7 @@ int Input(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int LoadProgram(Instruction inst) {
-  uint32_t *array = (uint32_t *) Registers[inst.registerB];
+  uint32_t *array = ((MemArray*) Registers[inst.registerB])->array;
   uint32_t offset = Registers[inst.registerC];
 
   //TODO: How to manage these? How to find the size?

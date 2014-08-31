@@ -275,7 +275,6 @@ int Allocate(Instruction inst) {
     new_array.array = (uint32_t *) calloc(size, sizeof(uint32_t));
     new_array.size = size;
     Registers[inst.registerB] = new_array;
-    global_memory
     return RET_SUCCESS;
 }
 

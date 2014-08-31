@@ -8,7 +8,7 @@ struct {
   unsigned int size;
 } MemArray;
 
-struct MemArray global_memory;
+MemArray global_memory;
 
 /* Eight indexable, general-purpose 32-bit registers. */
 uint32_t Registers[8] = {0};

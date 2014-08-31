@@ -199,7 +199,7 @@ int ArrayIndex(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int ArrayUpdate(Instruction inst) {
-  uint32_t *array = (global_memory + Registers[inst.registerA])->array;
+  uint32_t *array = ((MemArray*) Registers[inst.registerA])->array;
   uint32_t offset = Registers[inst.registerB];
 
   // Referencing an unallocated array or accessing an out-of-bounds index is a

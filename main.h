@@ -44,7 +44,7 @@ typedef enum
 /* Function Prototypes */
 int Init(int argc, char **argv);
 void PrintUsage(char *programName);
-void LoadFile(const char *filePath, uint32_t *programArray);
+void LoadFile(const char *filePath, MemArray* init_mem);
 Instruction ParseInstruction(uint32_t instruction);
 void ConditionalMove(Instruction inst);
 int ArrayIndex(Instruction inst);

@@ -77,12 +77,12 @@ int Init(int argc, char **argv) {
   }
 
   
-  MemArray* global_init;
-  global_init->size = -1;
-  global_init->array = NULL;
+  MemArray global_init;
+  global_init.size = -1;
+  global_init.array = NULL;
 
   // Try to load the file into array 0 and point the counter to it.
-  LoadFile(argv[1], global_init);
+  LoadFile(argv[1], &global_init);
   ProgramCounter = global_init->array;
   
   if(global_init->size = -1)

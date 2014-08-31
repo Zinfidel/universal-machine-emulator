@@ -265,7 +265,9 @@ void Nand(Instruction inst) {
  */
 int Allocate(Instruction inst) {
     uint32_t size = Registers[inst.registerC];
-    uint32_t* new_array = (uint32_t *) calloc(size, sizeof(uint32_t));
+    MemArray* new_array;
+    new_array.array= (uint32_t *) calloc(size, sizeof(uint32_t));
+    new_array.size = size;
     Registers[inst.registerB] = new_array;
 
     return RET_SUCCESS;

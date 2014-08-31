@@ -88,7 +88,7 @@ int Init(int argc, char **argv) {
   if(global_init.size = -1)
     return RET_FAILURE;
 
-  program_array = global_init;
+  program_array = &global_init;
   return RET_SUCCESS;
   /*
   else {

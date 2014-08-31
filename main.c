@@ -366,7 +366,6 @@ int LoadProgram(Instruction inst) {
     return RET_FAILURE;
   }
 
-  printf("Accessing program at: %d\n", mem);
   uint32_t *array = mem->array;
   unsigned int size = mem->size;
   

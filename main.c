@@ -288,7 +288,7 @@ int Allocate(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int Deallocate(Instruction inst) {
-  MemArray* array = (uint32_t *) Registers[inst.registerC];
+  MemArray* array = (MemArray *) Registers[inst.registerC];
   free(array->array);
   // Free the memory identified by the array
   free(array);

@@ -275,7 +275,7 @@ int Allocate(Instruction inst) {
     new_array.array = (uint32_t *) calloc(size, sizeof(uint32_t));
     new_array.size = size;
     Registers[inst.registerB] = new_array;
-
+    global_memory
     return RET_SUCCESS;
 }
 
@@ -288,7 +288,8 @@ int Allocate(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int Deallocate(Instruction inst) {
-  uint32_t * array = (uint32_t *) Registers[inst.registerC];
+  MemArray* array = (uint32_t *) Registers[inst.registerC];
+  free(array->array);
   // Free the memory identified by the array
   free(array);
   return RET_SUCCESS;

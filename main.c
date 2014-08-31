@@ -3,6 +3,8 @@
 #include <string.h>
 #include "main.h"
 
+
+MemArray* program_array;
 /* Eight indexable, general-purpose 32-bit registers. */
 uint32_t Registers[8] = {0};
 /*
@@ -82,9 +84,11 @@ int Init(int argc, char **argv) {
   // Try to load the file into array 0 and point the counter to it.
   LoadFile(argv[1], global_init);
   ProgramCounter = global_init->array;
-
-  if(global_memory->size = -1)
+  
+  if(global_init->size = -1)
     return RET_FAILURE;
+
+  program_array = global_init;
   return RET_SUCCESS;
   /*
   else {

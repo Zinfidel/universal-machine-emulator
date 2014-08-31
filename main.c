@@ -8,6 +8,8 @@ struct {
   unsigned int size;
 } MemArray;
 
+MemArray *global_memory;
+
 /* Eight indexable, general-purpose 32-bit registers. */
 uint32_t Registers[8] = {0};
 /*
@@ -79,11 +81,16 @@ int Init(int argc, char **argv) {
     return RET_FAILURE;
   }
 
-  uint32_t* program_0;
-
+  
+  uint32_t * init_program;
+  MemArray global_init;
+  global_init.array = init_program;
   // Try to load the file into array 0 and point the counter to it.
-  LoadFile(argv[1], program_0);
-  ProgramCounter = program_0;
+  LoadFile(argv[1], global_init);
+  ProgramCounter = init_program;
+
+  if(global_memory.size = -1)
+    return RET_FAILURE;
   return RET_SUCCESS;
   /*
   else {

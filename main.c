@@ -4,7 +4,7 @@
 #include "main.h"
 
 struct {
-  uint32_t * array;
+  uint32_t* array;
   unsigned int size;
 } MemArray;
 

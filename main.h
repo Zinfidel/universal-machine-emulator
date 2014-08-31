@@ -16,6 +16,12 @@ typedef struct
     unsigned opCode    :4;
 } Instruction;
 
+typedef struct
+{ 
+  uint32_t* array;
+  unsigned int size;
+} MemArray;
+
 /* Represents all possible 4-bit instruction opcodes. */
 typedef enum
 {
@@ -34,13 +40,6 @@ typedef enum
     LOAD_PROGRAM     = 12,
     LOAD_IMMEDIATE   = 13
 } OpCode;
-
-
-/* Global references for unit-testing. */
-extern uint32_t Registers[];
-extern uint32_t *Programs[];
-extern size_t ProgramSize[];
-
 
 /* Function Prototypes */
 int Init(int argc, char **argv);

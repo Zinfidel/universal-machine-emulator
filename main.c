@@ -364,14 +364,15 @@ int LoadProgram(Instruction inst) {
   }
 
   // Check for exceptions.
-  if (program == NULL) {
+  if (mem->array == NULL) {
     return RET_FAILURE;
   }
 
   // Copy the specified array into array 0 and point to it.
   uint32_t *duplicate = (uint32_t *)malloc(size * sizeof(uint32_t));
   memcpy(duplicate, array, size * sizeof(uint32_t));
-  free(Programs[0]);
+  global_memory->array = duplicate
+  free(array);
   ProgramCounter = array + offset;
 
   return RET_SUCCESS;

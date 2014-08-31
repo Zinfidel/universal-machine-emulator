@@ -86,7 +86,7 @@ int Init(int argc, char **argv) {
   MemArray global_init;
   global_init.array = init_program;
   // Try to load the file into array 0 and point the counter to it.
-  LoadFile(argv[1], global_init);
+  LoadFile(argv[1], &global_init);
   ProgramCounter = init_program;
 
   if(global_memory.size = -1)
@@ -116,30 +116,29 @@ void PrintUsage(char *programName) {
  * this pointer, and this pointer will be NULL if there are any errors.
  * @param size Gets set to the size (in 32-bit words) of the allocated array.
  */
-void LoadFile(const char *filePath, uint32_t *programArray) {
+void LoadFile(const char *filePath, MemArray* init_program) {
     FILE *file = fopen(filePath, "rb");
     if (file == NULL) return;
 
     // Seek to the end of the file to get its size (in bytes) so that we can
     // allocate a suitably-sized array for the data. Rewind the stream after.
     fseek(file, 0L, SEEK_END);
-    uint32_t* size;
-    *size = ftell(file);
-    programArray = (uint32_t *)malloc(*size);
+    init_program->size = ftell(file);
+    init_program->array = (uint32_t *)malloc(*size);
     rewind(file);
 
     // Finish up by reading the data into the program array. Endianess needs to
     // be converted, so one word is read at a time and converted.
-    *size /= 4; // Convert size from bytes to 32-bit words.
+    init_program->size /= 4; // Convert size from bytes to 32-bit words.
     uint32_t buffer = 0, swapped = 0, i = 0;
-    for (i; i < *size; i++) {
+    for (i; i < init_program->size; i++) {
         fread(&buffer, sizeof(uint32_t), 1, file);
         swapped = ((buffer >> 24) & 0xff)      | // move byte 3 to byte 0
                   ((buffer << 8)  & 0xff0000)  | // move byte 1 to byte 2
                   ((buffer >> 8)  & 0xff00)    | // move byte 2 to byte 1
                   ((buffer << 24) & 0xff000000); // byte 0 to byte 3
 
-        *(programArray + i) = swapped;
+        *(init_program-> + i) = swapped;
     }
     fclose(file);
     return;

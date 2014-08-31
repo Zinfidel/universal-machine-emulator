@@ -136,7 +136,7 @@ void LoadFile(const char *filePath, MemArray* init_program) {
                   ((buffer >> 8)  & 0xff00)    | // move byte 2 to byte 1
                   ((buffer << 24) & 0xff000000); // byte 0 to byte 3
 
-        *(init_program-> + i) = swapped;
+        *(init_program->array + i) = swapped;
     }
     fclose(file);
     return;

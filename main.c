@@ -349,9 +349,6 @@ int Input(Instruction inst) {
  */
 int LoadProgram(Instruction inst) {
   MemArray* mem = (MemArray*) Registers[inst.registerB];
-  printf("Accessing program at: %d\n", mem);
-  uint32_t *array = mem->array;
-  unsigned int size = mem->size;
   uint32_t offset = Registers[inst.registerC];
   
   //TODO: How to manage these? How to find the size?
@@ -366,6 +363,10 @@ int LoadProgram(Instruction inst) {
   if (mem->array == NULL) {
     return RET_FAILURE;
   }
+
+  printf("Accessing program at: %d\n", mem);
+  uint32_t *array = mem->array;
+  unsigned int size = mem->size;
 
   // Copy the specified array into array 0 and point to it.
   uint32_t *duplicate = (uint32_t *)malloc(size * sizeof(uint32_t));

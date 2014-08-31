@@ -75,12 +75,12 @@ int Init(int argc, char **argv) {
   }
 
   
-  uint32_t * init_program;
   MemArray global_init;
-  global_init.array = init_program;
+  global_init.size = -1;
+
   // Try to load the file into array 0 and point the counter to it.
   LoadFile(argv[1], &global_init);
-  ProgramCounter = init_program;
+  ProgramCounter = global_init.array;
 
   if(global_memory.size = -1)
     return RET_FAILURE;

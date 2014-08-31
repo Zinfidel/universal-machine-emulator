@@ -354,7 +354,7 @@ int LoadProgram(Instruction inst) {
   //TODO: How to manage these? How to find the size?
   // If the program is just using this instruction to move the program
   // counter, don't bother with copying memory and stuff.
-  if(mem == program_array) {
+  if(mem == 0) {
     ProgramCounter = array + offset;
     return RET_SUCCESS;
   }

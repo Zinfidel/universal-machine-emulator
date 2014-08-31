@@ -349,7 +349,7 @@ int Input(Instruction inst) {
  */
 int LoadProgram(Instruction inst) {
   MemArray* mem = (MemArray*) Registers[inst.registerB];
-  printf("Accessing program at: %x\n", mem);
+  printf("Accessing program at: %d\n", mem);
   uint32_t *array = mem->array;
   unsigned int size = mem->size;
   uint32_t offset = Registers[inst.registerC];

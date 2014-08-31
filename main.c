@@ -122,7 +122,7 @@ void LoadFile(const char *filePath, MemArray* init_program) {
     // allocate a suitably-sized array for the data. Rewind the stream after.
     fseek(file, 0L, SEEK_END);
     init_program->size = ftell(file);
-    init_program->array = (uint32_t *)malloc(*size);
+    init_program->array = (uint32_t *)malloc(init_program->size);
     rewind(file);
 
     // Finish up by reading the data into the program array. Endianess needs to

@@ -177,7 +177,7 @@ void ConditionalMove(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int ArrayIndex(Instruction inst) {
-  uint32_t *array = (global_memory + Registers[inst.registerB])->array;
+  uint32_t *array = ((MemArray*) Registers[inst.registerB])->array;
   uint32_t offset = Registers[inst.registerC];
     
   // Referencing an unallocated array or accessing an out-of-bounds index is a

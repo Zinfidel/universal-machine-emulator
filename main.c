@@ -3,13 +3,6 @@
 #include <string.h>
 #include "main.h"
 
-struct {
-  uint32_t* array;
-  unsigned int size;
-} MemArray;
-
-MemArray global_memory;
-
 /* Eight indexable, general-purpose 32-bit registers. */
 uint32_t Registers[8] = {0};
 /*

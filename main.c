@@ -288,8 +288,9 @@ int Allocate(Instruction inst) {
  */
 int Deallocate(Instruction inst) {
   MemArray* array = (MemArray *) Registers[inst.registerC];
+  // Free the memory identified by the MemArray pointer and the
+  // array held by the MemArray structure
   free(array->array);
-  // Free the memory identified by the array
   free(array);
   return RET_SUCCESS;
 }

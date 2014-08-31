@@ -81,9 +81,9 @@ int Init(int argc, char **argv) {
 
   // Try to load the file into array 0 and point the counter to it.
   LoadFile(argv[1], global_init);
-  ProgramCounter = global_init.array;
+  ProgramCounter = global_init->array;
 
-  if(global_memory.size = -1)
+  if(global_memory->size = -1)
     return RET_FAILURE;
   return RET_SUCCESS;
   /*

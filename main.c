@@ -3,6 +3,11 @@
 #include <string.h>
 #include "main.h"
 
+struct {
+  uint32_t * array;
+  unsigned int size;
+} SArray;
+
 /* Eight indexable, general-purpose 32-bit registers. */
 uint32_t Registers[8] = {0};
 /*

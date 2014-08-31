@@ -85,7 +85,7 @@ int Init(int argc, char **argv) {
   LoadFile(argv[1], &global_init);
   ProgramCounter = global_init.array;
   
-  if(global_init.size = -1)
+  if(global_init.size == -1)
     return RET_FAILURE;
 
   program_array = &global_init;

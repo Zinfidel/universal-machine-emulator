@@ -369,8 +369,14 @@ int LoadProgram(Instruction inst) {
   // Copy the specified array into array 0 and point to it.
   uint32_t *duplicate = (uint32_t *)malloc(size * sizeof(uint32_t));
   memcpy(duplicate, array, size * sizeof(uint32_t));
-  global_memory->array = duplicate;
+  
+  //update the global program_array to point to the correct data now
+  program_array->array = duplicate;
+  program_array->size = size;
+
+  //free the old array
   free(array);
+  //reset the program counter to point to the new array + an offset
   ProgramCounter = array + offset;
 
   return RET_SUCCESS;

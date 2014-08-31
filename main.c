@@ -354,15 +354,12 @@ int LoadProgram(Instruction inst) {
   MemArray* mem = (MemArray*) Registers[inst.registerB];
   uint32_t offset = Registers[inst.registerC];
 
-  printf("Accessing program at: %d\n", mem);
-  uint32_t *array = mem->array;
-  unsigned int size = mem->size;
 
   //TODO: How to manage these? How to find the size?
   // If the program is just using this instruction to move the program
   // counter, don't bother with copying memory and stuff.
   if(mem == 0) {
-    ProgramCounter = array + offset;
+    ProgramCounter = program_array->array + offset;
     return RET_SUCCESS;
   }
 
@@ -370,6 +367,10 @@ int LoadProgram(Instruction inst) {
   if (mem->array == NULL) {
     return RET_FAILURE;
   }
+
+  printf("Accessing program at: %d\n", mem);
+  uint32_t *array = mem->array;
+  unsigned int size = mem->size;
   
   // Copy the specified array into array 0 and point to it.
   uint32_t *duplicate = (uint32_t *)malloc(size * sizeof(uint32_t));

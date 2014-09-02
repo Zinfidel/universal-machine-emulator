@@ -16,10 +16,11 @@ typedef struct
     unsigned opCode    :4;
 } Instruction;
 
+/* Packages an array together with its length. */
 typedef struct
 { 
-  uint32_t* array;
-  unsigned int size;
+  uint32_t size;
+  uint32_t *array;
 } MemArray;
 
 /* Represents all possible 4-bit instruction opcodes. */

@@ -3,19 +3,12 @@
 #include <string.h>
 #include "main.h"
 
+/* Array 0 - the array that holds the initial program. */
+MemArray Program;
 
-MemArray* program_array;
 /* Eight indexable, general-purpose 32-bit registers. */
 uint32_t Registers[8] = {0};
-/*
-/* Pointers to program arrays. NULL pointer indicates an unallocated array.
- * Note that instructions retrieve the array pointers via their index in this
- * array! Effectively, the program array 0 is "referenced" by retrieving the
- * item at index 0.   * /
-uint32_t **Programs[NUM_ARRAYS] = {NULL};
 
-uint32_t *ProgramSize[NUM_ARRYS] = {0};
-*/
 /* Points to the current word to be read from a program array. */
 uint32_t *ProgramCounter = NULL;
 
@@ -33,7 +26,8 @@ int main(int argc, char **argv) {
         // Process the instruction
         Instruction inst = ParseInstruction(word);
         int retVal = RET_SUCCESS;
-        switch(inst.opCode) {
+
+        switch (inst.opCode) {
             case CONDITIONAL_MOVE: ConditionalMove(inst);      break;
             case ARRAY_INDEX:      retVal = ArrayIndex(inst);  break;
             case ARRAY_UPDATE:     retVal = ArrayUpdate(inst); break;
@@ -41,25 +35,26 @@ int main(int argc, char **argv) {
             case MULTIPLICATION:   Multiply(inst);             break;
             case DIVISION:         retVal = Divide(inst);      break;
             case NAND:             Nand(inst);                 break;
-            case HALT:             return(EXIT_SUCCESS);
-            case ALLOCATION:       retVal = Allocate(inst);    break;
+            case HALT:             return (EXIT_SUCCESS);
+            case ALLOCATION:       retVal =   Allocate(inst);  break;
             case DEALLOCATION:     retVal = Deallocate(inst);  break;
             case OUTPUT:           retVal = Output(inst);      break;
             case INPUT:            retVal = Input(inst);       break;
             case LOAD_PROGRAM:     retVal = LoadProgram(inst); break;
             case LOAD_IMMEDIATE:   LoadImmediate(word);        break;
-            default:               return(EXIT_FAILURE);
+            default:               return (EXIT_FAILURE);
         }
 
         // Check for exit conditions, which include a failure return value from
         // the above functions, or the program counter pointing pointing
         // outside of the array.
         if (retVal == RET_FAILURE) {
+            printf("%u\n", inst.opCode);
             return EXIT_FAILURE;
         }
-	//        if ((ProgramCounter - Programs[0]) >= ProgramSize[0]) {
-	//            return EXIT_FAILURE;
-	//        }
+        if ((ProgramCounter - Program.array) >= Program.size) {
+            return EXIT_FAILURE;
+        }
     }
 }
 
@@ -70,32 +65,26 @@ int main(int argc, char **argv) {
  * @return RET_FAILURE if anything goes wrong, otherwise RET_SUCCESS.
  */
 int Init(int argc, char **argv) {
-  // Should only have one argument - the program to load.
-  if (argc != 2) {
-    PrintUsage(argv[0]);
-    return RET_FAILURE;
-  }
+    // Should only have one argument - the program to load.
+    if (argc != 2) {
+        PrintUsage(argv[0]);
+        return RET_FAILURE;
+    }
 
-  
-  MemArray global_init;
-  global_init.size = -1;
-  global_init.array = NULL;
+    Program.size = -1;
+    Program.array = NULL;
 
-  // Try to load the file into array 0 and point the counter to it.
-  LoadFile(argv[1], &global_init);
-  ProgramCounter = global_init.array;
-  
-  if(global_init.size == -1)
-    return RET_FAILURE;
+    // Try to load the file into array 0 and point the counter to it.
+    LoadFile(argv[1], &Program);
+    ProgramCounter = Program.array;
 
-  program_array = &global_init;
-  return RET_SUCCESS;
-  /*
-  else {
-    printf("Could not load %s.", argv[1]);
-    PrintUsage(argv[0]);
-    return RET_FAILURE;
-    }*/
+    if (Program.size == -1) {
+        printf("Could not load %s.", argv[1]);
+        PrintUsage(argv[0]);
+        return RET_FAILURE;
+    }
+
+    return RET_SUCCESS;
 }
 
 /**
@@ -110,11 +99,11 @@ void PrintUsage(char *programName) {
 /**
  * Loads a program from a binary file into an array.
  * @param filePath The path to the binary file.
- * @param programArray Pointer to a program array. Memory will be allocated for
+ * @param init_program Pointer to a program array. Memory will be allocated for
  * this pointer, and this pointer will be NULL if there are any errors.
  * @param size Gets set to the size (in 32-bit words) of the allocated array.
  */
-void LoadFile(const char *filePath, MemArray* init_program) {
+void LoadFile(const char *filePath, MemArray *init_program) {
     FILE *file = fopen(filePath, "rb");
     if (file == NULL) return;
 
@@ -122,7 +111,7 @@ void LoadFile(const char *filePath, MemArray* init_program) {
     // allocate a suitably-sized array for the data. Rewind the stream after.
     fseek(file, 0L, SEEK_END);
     init_program->size = ftell(file);
-    init_program->array = (uint32_t *)malloc(init_program->size);
+    init_program->array = (uint32_t *) malloc(init_program->size);
     rewind(file);
 
     // Finish up by reading the data into the program array. Endianess needs to
@@ -130,11 +119,11 @@ void LoadFile(const char *filePath, MemArray* init_program) {
     init_program->size /= 4; // Convert size from bytes to 32-bit words.
     uint32_t buffer = 0, swapped = 0, i = 0;
     for (i; i < init_program->size; i++) {
-        fread(&buffer, sizeof(uint32_t), 1, file);
-        swapped = ((buffer >> 24) & 0xff)      | // move byte 3 to byte 0
-                  ((buffer << 8)  & 0xff0000)  | // move byte 1 to byte 2
-                  ((buffer >> 8)  & 0xff00)    | // move byte 2 to byte 1
-                  ((buffer << 24) & 0xff000000); // byte 0 to byte 3
+        fread(&buffer, sizeof (uint32_t), 1, file);
+        swapped = ((buffer >> 24) & 0xff) | // move byte 3 to byte 0
+                ((buffer << 8) & 0xff0000) | // move byte 1 to byte 2
+                ((buffer >> 8) & 0xff00) | // move byte 2 to byte 1
+                ((buffer << 24) & 0xff000000); // byte 0 to byte 3
 
         *(init_program->array + i) = swapped;
     }
@@ -177,18 +166,17 @@ void ConditionalMove(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int ArrayIndex(Instruction inst) {
-  uint32_t *array = ((MemArray*) Registers[inst.registerB])->array;
-  uint32_t offset = Registers[inst.registerC];
-    
-  // Referencing an unallocated array or accessing an out-of-bounds index is a
-  // machine exception.
-  if (array == NULL) {
-    return RET_FAILURE;
-  } 
-  else {
-    Registers[inst.registerA] = *(array + offset);
+    MemArray *arrayStruct = (MemArray*)Registers[inst.registerB];
+    uint32_t offset = Registers[inst.registerC];
+
+    // A register value of 0 means use Program array.
+    arrayStruct = arrayStruct ? arrayStruct : &Program;
+
+    // Check for out-of-bounds index.
+    if (offset >= arrayStruct->size) return RET_FAILURE;
+
+    Registers[inst.registerA] = arrayStruct->array[offset];
     return RET_SUCCESS;
-  }
 }
 
 /**
@@ -199,17 +187,17 @@ int ArrayIndex(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int ArrayUpdate(Instruction inst) {
-  uint32_t *array = ((MemArray*) Registers[inst.registerA])->array;
-  uint32_t offset = Registers[inst.registerB];
+    MemArray *arrayStruct = (MemArray*)Registers[inst.registerA];
+    uint32_t offset = Registers[inst.registerB];
 
-  // Referencing an unallocated array or accessing an out-of-bounds index is a
-  // machine exception.
-  if (array == NULL) {
-    return RET_FAILURE;
-  } else {
-    *(array + offset) = Registers[inst.registerC];
+    // A register value of 0 means use Program array.
+    arrayStruct = arrayStruct ? arrayStruct : &Program;
+
+    // Check for out-of-bounds index.
+    if (offset >= arrayStruct->size) return RET_FAILURE;
+
+    *(arrayStruct->array + offset) = Registers[inst.registerC];
     return RET_SUCCESS;
-  }
 }
 
 /**
@@ -270,12 +258,11 @@ void Nand(Instruction inst) {
 int Allocate(Instruction inst) {
     uint32_t size = Registers[inst.registerC];
 
-    MemArray new_array;
-    new_array.array = (uint32_t *) calloc(size, sizeof(uint32_t));
-    new_array.size = size;
+    MemArray *new_array = (MemArray*) malloc(sizeof(MemArray));
+    new_array->array = (uint32_t*) calloc(size, sizeof(uint32_t));
+    new_array->size = size;
 
-    Registers[inst.registerB] = &new_array;
-
+    Registers[inst.registerB] = (uint32_t)new_array;
     return RET_SUCCESS;
 }
 
@@ -288,12 +275,12 @@ int Allocate(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int Deallocate(Instruction inst) {
-  MemArray* array = (MemArray *) Registers[inst.registerC];
-  // Free the memory identified by the MemArray pointer and the
-  // array held by the MemArray structure
-  free(array->array);
-  free(array);
-  return RET_SUCCESS;
+    MemArray* array = (MemArray *) Registers[inst.registerC];
+    // Free the memory identified by the MemArray pointer and the
+    // array held by the MemArray structure
+    free(array->array);
+    free(array);
+    return RET_SUCCESS;
 }
 
 /**
@@ -325,8 +312,8 @@ int Output(Instruction inst) {
 int Input(Instruction inst) {
     int value = getchar();
 
-    switch(value) {
-        // End of file, or end of input (carriage return or ctrl + D)
+    switch (value) {
+            // End of file, or end of input (carriage return or ctrl + D)
         case EOF:
             Registers[inst.registerC] = -1;
             return RET_SUCCESS;
@@ -351,38 +338,38 @@ int Input(Instruction inst) {
  * @return RET_FAILURE if anything goes wrong, RET_SUCCESS otherwise.
  */
 int LoadProgram(Instruction inst) {
-  MemArray* mem = (MemArray*) Registers[inst.registerB];
-  uint32_t offset = Registers[inst.registerC];
+    MemArray *arrayStruct = (MemArray*) Registers[inst.registerB];
+    uint32_t offset = Registers[inst.registerC];
 
-  // If the program is just using this instruction to move the program
-  // counter, don't bother with copying memory and stuff.
-  if(mem == 0) {
-    ProgramCounter = (program_array->array) + offset;
+    // If the program is just using this instruction to move the program
+    // counter, don't bother with copying memory and stuff.
+    if (arrayStruct == NULL) {
+        ProgramCounter = Program.array + offset;
+        return RET_SUCCESS;
+    }
+
+    // An offset larger than the program size is a machine exception.
+    if (offset >= arrayStruct->size) return RET_FAILURE;
+
+    uint32_t *array = arrayStruct->array;
+    uint32_t size = arrayStruct->size;
+
+    // Copy the specified array into the program array and point to it.
+    uint32_t *duplicate = (uint32_t *) malloc(size * sizeof (uint32_t));
+    memcpy(duplicate, array, size * sizeof (uint32_t));
+
+    // Free up program 0 before assigned the new program to it.
+    free(Program.array);
+
+    //update the program array to point to the correct data now
+    Program.array = duplicate;
+    Program.size = size;
+
+
+    // Reset the program counter to point to the new array + an offset
+    ProgramCounter = Program.array + offset;
+
     return RET_SUCCESS;
-  }
-
-  // Check for exceptions.
-  if (mem->array == NULL) {
-    return RET_FAILURE;
-  }
-
-  uint32_t *array = mem->array;
-  unsigned int size = mem->size;
-  
-  // Copy the specified array into array 0 and point to it.
-  uint32_t *duplicate = (uint32_t *)malloc(size * sizeof(uint32_t));
-  memcpy(duplicate, array, size * sizeof(uint32_t));
-  
-  //update the global program_array to point to the correct data now
-  program_array->array = duplicate;
-  program_array->size = size;
-
-  //free the old array
-  free(array);
-  //reset the program counter to point to the new array + an offset
-  ProgramCounter = array + offset;
-
-  return RET_SUCCESS;
 }
 
 /**
